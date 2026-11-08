@@ -1,0 +1,22 @@
+<!doctype html>
+<!-- Horizontal logo lockup (badge + wordmark), mirrors the site header. ?dark renders the on-dark variant. Rendered by build.mjs. -->
+<html lang="de-AT">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=block">
+<style>
+  * { margin:0; }
+  body { display:inline-flex; align-items:center; gap:36px; padding:24px; background:transparent; font-family:Poppins, sans-serif; color:#321004; -webkit-font-smoothing:antialiased; }
+  body.dark { color:#fff; }
+  img { width:260px; height:260px; }
+  .name { font-size:96px; font-weight:700; line-height:1; letter-spacing:-.02em; white-space:nowrap; }
+  .tag { margin-top:14px; font-size:34px; font-weight:500; color:#6b5a52; white-space:nowrap; }
+  .dark .tag { color:#d7ecff; }
+</style>
+</head>
+<body>
+  <img src="../../public/brand/die-anpacker-logo.png" alt="">
+  <div><p class="name">Die Anpacker</p><p class="tag">Umzug &amp; Räumung in Graz</p></div>
+  <script>if (location.search.includes("dark")) document.body.classList.add("dark");</script>
+</body>
+</html>

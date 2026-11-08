@@ -1,0 +1,58 @@
+<!doctype html>
+<!-- Source of public/images/og-die-anpacker.jpg (1200x630). Rendered by scripts/brand/build.mjs. Colours = app/globals.css tokens. -->
+<html lang="de-AT">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=block">
+<style>
+  :root { --navy:#161345; --sky:#d7ecff; --ember:#ff7f00; --blush:#ffcfdb; --paper:#fff; }
+  * { margin:0; box-sizing:border-box; }
+  html, body { width:1200px; height:630px; overflow:hidden; }
+  body { position:relative; background:var(--navy); color:var(--paper); font-family:Poppins, sans-serif; -webkit-font-smoothing:antialiased; }
+
+  /* faint vertical hairlines: an editorial grid, barely visible */
+  .grid { position:absolute; inset:0; background:repeating-linear-gradient(90deg, rgba(255,255,255,.035) 0 1px, transparent 1px 120px); }
+
+  /* doorway: arch-topped, bleeds off the bottom edge */
+  .door { position:absolute; left:694px; top:64px; width:432px; height:600px; border-radius:216px 216px 0 0;
+          background:linear-gradient(180deg, #e6f3ff 0%, var(--sky) 55%, #c4e0fb 100%); }
+  .door::after { content:""; position:absolute; inset:18px 18px 0; border-radius:198px 198px 0 0; border:2px solid rgba(22,19,69,.10); border-bottom:0; }
+  .logo { position:absolute; left:720px; top:160px; width:380px; height:380px; filter:drop-shadow(0 18px 30px rgba(22,19,69,.28)); }
+
+  /* boxes waiting at the threshold */
+  .box { position:absolute; border-radius:6px; }
+  /* kraft-orange boxes: flap seam + tape strip */
+  .box::before { content:""; position:absolute; left:50%; top:0; width:16%; height:30%; transform:translateX(-50%); background:rgba(255,255,255,.30); }
+  .box::after { content:""; position:absolute; left:0; right:0; top:24%; height:2px; background:rgba(22,19,69,.12); }
+  .b1 { left:612px; top:508px; width:124px; height:88px; background:var(--ember); }
+  .b2 { left:634px; top:440px; width:84px; height:68px; background:#ffa040; }
+  .floor { position:absolute; left:80px; right:0; top:596px; height:2px; background:rgba(255,255,255,.14); }
+
+  .text { position:absolute; left:80px; top:70px; width:560px; }
+  .eyebrow { display:flex; align-items:center; gap:12px; font-size:19px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--sky); }
+  .eyebrow i { width:10px; height:10px; border-radius:50%; background:var(--ember); }
+  h1 { margin-top:18px; font-size:92px; line-height:.97; font-weight:700; letter-spacing:-.025em; }
+  .sub { margin-top:24px; font-size:35px; line-height:1.24; font-weight:500; letter-spacing:-.01em; }
+  .rule { margin-top:28px; width:64px; height:4px; border-radius:2px; background:var(--ember); }
+  .services { margin-top:20px; font-size:23px; font-weight:500; color:rgba(215,236,255,.88); letter-spacing:.01em; }
+  .url { position:absolute; left:80px; top:552px; font-size:21px; font-weight:600; letter-spacing:.02em; color:rgba(255,255,255,.72); }
+</style>
+</head>
+<body>
+  <div class="grid"></div>
+  <div class="floor"></div>
+  <div class="door"></div>
+  <img class="logo" src="../../public/logo.webp" alt="">
+  <div class="box b2"></div>
+  <div class="box b1"></div>
+
+  <div class="text">
+    <p class="eyebrow"><i></i>Graz &middot; Steiermark</p>
+    <h1>Die Anpacker</h1>
+    <p class="sub">Umzüge &amp; Räumungen<br>in Graz und der Steiermark</p>
+    <div class="rule"></div>
+    <p class="services">Privat &middot; Gewerbe &middot; Entrümpelungen</p>
+  </div>
+  <p class="url">dieanpacker.at</p>
+</body>
+</html>
