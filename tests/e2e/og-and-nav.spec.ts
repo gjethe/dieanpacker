@@ -47,16 +47,16 @@ test("contact bar: three separate targets, correct links, no overflow, only on p
 
 // Records every view-transition animation of the next navigation (one snapshot per page, opacity only).
 const recordTransition = (page: Page) => page.evaluate(() => {
-  const w = window as unknown as { vt?: { p: string; ms: number }[] };
+  const w = window as unknown as { vt?: { p: string; ms: number; delay: number }[] };
   w.vt = undefined;
   const tick = () => {
     const a = document.getAnimations().filter((x) => (x.effect as KeyframeEffect | null)?.pseudoElement?.startsWith("::view-transition"));
-    if (a.length) w.vt = a.map((x) => ({ p: (x.effect as KeyframeEffect).pseudoElement!, ms: Number(x.effect!.getTiming().duration) }));
+    if (a.length) w.vt = a.map((x) => ({ p: (x.effect as KeyframeEffect).pseudoElement!, ms: Number(x.effect!.getTiming().duration), delay: Number(x.effect!.getTiming().delay) }));
     else requestAnimationFrame(tick);
   };
   requestAnimationFrame(tick);
 });
-const recorded = (page: Page) => page.evaluate(() => (window as unknown as { vt?: { p: string; ms: number }[] }).vt);
+const recorded = (page: Page) => page.evaluate(() => (window as unknown as { vt?: { p: string; ms: number; delay: number }[] }).vt);
 
 test("page changes fade in under 180ms and survive back, forward, reload and direct entry", async ({ page }) => {
   const problems: string[] = [];
@@ -73,6 +73,9 @@ test("page changes fade in under 180ms and survive back, forward, reload and dir
     const vt = (await recorded(page))!;
     expect(vt.filter((a) => a.p.startsWith("::view-transition-new(_")).length, `${href}: incoming snapshots`).toBeLessThanOrEqual(1);
     for (const a of vt.filter((x) => /-(old|new)\(/.test(x.p))) expect(a.ms, a.p).toBeLessThanOrEqual(180);
+    // The two pages must never be visible together, or their text overlaps.
+    const oldEnds = Math.max(...vt.filter((a) => a.p.includes("-old(")).map((a) => a.ms + a.delay));
+    for (const a of vt.filter((x) => x.p.includes("-new("))) expect(a.delay, a.p).toBeGreaterThanOrEqual(oldEnds);
     expect(vt.some((a) => /(site-header|contact-bar)\)/.test(a.p) && a.p.includes("-old("))).toBe(false);
   }
 

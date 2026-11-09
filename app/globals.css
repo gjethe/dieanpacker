@@ -270,9 +270,10 @@ dialog::backdrop { animation: fade .35s var(--ease); }
     @keyframes reveal { from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: none; } }
   }
 
-  /* Page-to-page crossfade (React <ViewTransition> in app/template.tsx): opacity only, navigation is never delayed */
-  ::view-transition-old(*) { animation: vt-out .12s ease-out both; }
-  ::view-transition-new(*) { animation: vt-in .16s ease-out both; }
+  /* Page change (React <ViewTransition> in app/template.tsx): opacity only. The new page starts once the old one is
+     gone, because two pages of text visible at once read as overlapping letters. */
+  ::view-transition-old(*) { animation: vt-out 70ms ease-out both; }
+  ::view-transition-new(*) { animation: vt-in 130ms ease-out 70ms both; }
   @keyframes vt-out { to { opacity: 0; } }
   @keyframes vt-in { from { opacity: 0; } }
   /* Header and contact bar stay put above the fade */

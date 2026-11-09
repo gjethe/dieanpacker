@@ -64,7 +64,7 @@ Changes:
 
 Result: the bar dims about 25 to 30 ms after touch start, including test-tool latency. Links, icons and layout are unchanged. The `tel:` and `wa.me` links are verified. All three targets are separate, not nested, and at least 64 px high. There is no overflow. The safe-area padding is unchanged.
 
-**Limitation:** while a fade runs (now 160 ms, was 450 ms), a tap on the bar still does not register. That is how the browser treats elements pinned this way.
+**Limitation:** while a page change runs (now 200 ms, was 450 ms), a tap on the bar still does not register. That is how the browser treats elements pinned this way.
 
 **Please check:** the brief lists Call, WhatsApp and Email, but the third button is actually **"Anfrage", linking to `/kontakt`**, not `mailto:`. It was left as it is.
 
@@ -74,7 +74,7 @@ A transition already existed, but it caused the "glitch". Frozen mid-flight, it 
 
 - `app/template.tsx` (with `app/leistungen/template.tsx` and `app/blog/template.tsx` for sub-pages): exactly one snapshot per page, and the old and new pages crossfade in place, even from a scrolled position.
 - `app/layout.tsx`: the old per-section `<ViewTransition>` removed.
-- `app/globals.css`: outgoing fade 120 ms, incoming fade 160 ms, opacity only. Header and contact bar stay still. Clicks pass through the transition overlay.
+- `app/globals.css`: outgoing fade 70 ms, then incoming fade 130 ms, opacity only. The new page starts only once the old one is gone, because a true crossfade showed both pages' text at once and read as overlapping letters. Header and contact bar stay still. Clicks pass through the transition overlay.
 - Reduced motion: no transition animation plays.
 
 No package was added and no routing was changed. Browsers without View Transitions simply navigate instantly.
@@ -94,8 +94,9 @@ Viewport run at 375×812, 390×844, 430×932, 768×1024, 1440×900, seven in-sit
 |---|---|---|
 | Click to URL change (all viewports) | 32–120 ms | 24–119 ms |
 | Page layers animated per navigation | 2–10 old, 2–10 new | 1 old, 1 new |
-| Longest fade | 450 ms | 160 ms |
-| Bar tap dead time per navigation | 450 ms | 160 ms |
+| Whole transition | 450 ms | 200 ms (70 out, 130 in) |
+| Old and new page visible together | yes | never (scrubbed on 7 page changes, 2 viewports, 2 scroll positions) |
+| Bar tap dead time per navigation | 450 ms | 200 ms |
 | Bar pressed state appears | never | about 25–30 ms |
 | Layout shift | 0 | 0 |
 
