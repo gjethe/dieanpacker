@@ -270,15 +270,13 @@ dialog::backdrop { animation: fade .35s var(--ease); }
     @keyframes reveal { from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: none; } }
   }
 
-  /* Page change (React <ViewTransition> in app/template.tsx): opacity only. The new page starts once the old one is
-     gone, because two pages of text visible at once read as overlapping letters. */
-  ::view-transition-old(*) { animation: vt-out 70ms ease-out both; }
-  ::view-transition-new(*) { animation: vt-in 130ms ease-out 70ms both; }
-  @keyframes vt-out { to { opacity: 0; } }
+  /* Page change (React <ViewTransition> in app/template.tsx): the old page is never painted, because two pages of
+     text visible at once read as overlapping letters (iOS Safari showed it even with staggered fades). */
+  ::view-transition-old(*) { display: none; }
+  ::view-transition-new(*) { animation: vt-in 130ms ease-out both; }
   @keyframes vt-in { from { opacity: 0; } }
   /* Header and contact bar stay put above the fade */
   ::view-transition-group(site-header), ::view-transition-group(contact-bar) { animation: none; z-index: 100; }
-  ::view-transition-old(site-header), ::view-transition-old(contact-bar) { display: none; }
   ::view-transition-new(site-header), ::view-transition-new(contact-bar) { animation: none; }
 }
 

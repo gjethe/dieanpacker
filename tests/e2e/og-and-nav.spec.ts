@@ -73,10 +73,8 @@ test("page changes fade in under 180ms and survive back, forward, reload and dir
     const vt = (await recorded(page))!;
     expect(vt.filter((a) => a.p.startsWith("::view-transition-new(_")).length, `${href}: incoming snapshots`).toBeLessThanOrEqual(1);
     for (const a of vt.filter((x) => /-(old|new)\(/.test(x.p))) expect(a.ms, a.p).toBeLessThanOrEqual(180);
-    // The two pages must never be visible together, or their text overlaps.
-    const oldEnds = Math.max(...vt.filter((a) => a.p.includes("-old(")).map((a) => a.ms + a.delay));
-    for (const a of vt.filter((x) => x.p.includes("-new("))) expect(a.delay, a.p).toBeGreaterThanOrEqual(oldEnds);
-    expect(vt.some((a) => /(site-header|contact-bar)\)/.test(a.p) && a.p.includes("-old("))).toBe(false);
+    // The old page is never painted during the change, or its text overlaps the new page.
+    expect(vt.filter((a) => a.p.includes("-old(")).map((a) => a.p)).toEqual([]);
   }
 
   await page.goBack();
