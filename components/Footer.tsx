@@ -5,6 +5,7 @@ import { Logo } from "./Header";
 import { FormIcon, PhoneIcon, WhatsAppIcon } from "./icons";
 import { CookieSettingsButton } from "./Consent";
 import { MapEmbed } from "./MapEmbed";
+import { ContactBarList } from "./ContactBarList";
 
 export function Footer() {
   return (
@@ -70,10 +71,10 @@ export function MobileContactBar() {
   return (
     <nav
       aria-label="Schnellkontakt"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper md:hidden"
-      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      className="contact-bar fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper md:hidden"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)", viewTransitionName: "contact-bar" }}
     >
-      <ul className="grid h-16 grid-cols-3">
+      <ContactBarList>
         <li>
           <a href={telHref} className="flex h-full flex-col items-center justify-center gap-0.5 text-sm font-semibold">
             <PhoneIcon />
@@ -92,7 +93,7 @@ export function MobileContactBar() {
             Anfrage
           </Link>
         </li>
-      </ul>
+      </ContactBarList>
     </nav>
   );
 }

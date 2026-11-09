@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
-import { ViewTransition } from "react";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer, MobileContactBar } from "@/components/Footer";
@@ -45,8 +44,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body suppressHydrationWarning>
         <a href="#inhalt" className="skip">Zum Inhalt springen</a>
         <Header />
-        {/* crossfades page content on navigation; header and footer stay put */}
-        <main id="inhalt"><ViewTransition>{children}</ViewTransition></main>
+        <main id="inhalt">{children}</main>
         <Footer />
         <MobileContactBar />
         <ConsentManager />

@@ -19,7 +19,7 @@ export function Logo({ size = 52 }: { size?: number }) {
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-paper/95 backdrop-blur supports-[backdrop-filter]:bg-paper/85">
+    <header className="sticky top-0 z-40 border-b border-line bg-paper/95 backdrop-blur supports-[backdrop-filter]:bg-paper/85" style={{ viewTransitionName: "site-header" }}>
       <div className="wrap flex h-[72px] items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-3" aria-label="Die Anpacker, zur Startseite">
           <Logo />

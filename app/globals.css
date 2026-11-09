@@ -239,6 +239,12 @@ a.card:hover { background: var(--color-sky); transform: translateY(-3px); }
 dialog[open] { animation: pop .35s var(--ease); }
 dialog::backdrop { animation: fade .35s var(--ease); }
 
+/* Mobile contact bar: feedback the moment a finger lands, a short ease on release */
+.contact-bar a { touch-action: manipulation; -webkit-tap-highlight-color: transparent; transition: opacity .14s ease-out; }
+.contact-bar a:active, .contact-bar a[data-pressed] { opacity: .6; transition-duration: 0s; }
+/* The transition overlay would otherwise swallow taps while it runs */
+::view-transition { pointer-events: none; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after, ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { transition: none !important; animation: none !important; }
 }
@@ -264,11 +270,15 @@ dialog::backdrop { animation: fade .35s var(--ease); }
     @keyframes reveal { from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: none; } }
   }
 
-  /* Page-to-page crossfade (React <ViewTransition> in the root layout) */
-  ::view-transition-old(*) { animation: vt-out .25s var(--ease) both; }
-  ::view-transition-new(*) { animation: vt-in .45s var(--ease) both; }
-  @keyframes vt-out { to { opacity: 0; transform: translateY(-8px); } }
-  @keyframes vt-in { from { opacity: 0; transform: translateY(12px); } }
+  /* Page-to-page crossfade (React <ViewTransition> in app/template.tsx): opacity only, navigation is never delayed */
+  ::view-transition-old(*) { animation: vt-out .12s ease-out both; }
+  ::view-transition-new(*) { animation: vt-in .16s ease-out both; }
+  @keyframes vt-out { to { opacity: 0; } }
+  @keyframes vt-in { from { opacity: 0; } }
+  /* Header and contact bar stay put above the fade */
+  ::view-transition-group(site-header), ::view-transition-group(contact-bar) { animation: none; z-index: 100; }
+  ::view-transition-old(site-header), ::view-transition-old(contact-bar) { display: none; }
+  ::view-transition-new(site-header), ::view-transition-new(contact-bar) { animation: none; }
 }
 
 /* grid items default to min-width:auto, so a wide table would stretch the article column past the viewport */
