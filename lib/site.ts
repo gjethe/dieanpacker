@@ -5,7 +5,8 @@ const phoneE164 = "+436603926662"; // VERIFY: taken from old site + its WhatsApp
 
 export const site = {
   name: "Die Anpacker",
-  url: (process.env.NEXT_PUBLIC_SITE_URL || "https://dieanpacker.at").replace(/\/+$/, ""),
+  // On Vercel this is the production domain: the .vercel.app address until a custom domain is attached, then that domain.
+  url: (process.env.NEXT_PUBLIC_SITE_URL || (process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}` : "https://dieanpacker.at")).replace(/\/+$/, ""),
   locale: "de-AT",
   description:
     "Die Anpacker aus Graz übernehmen Privat- und Firmenumzüge, Entrümpelungen, Haushaltsauflösungen, Verlassenschaftsräumungen, Möbeltransporte sowie Möbelmontage, in Graz und der Steiermark, nach Absprache auch österreichweit.",
