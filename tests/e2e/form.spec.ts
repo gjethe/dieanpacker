@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { LEISTUNGEN, LIFT, OBJEKTARTEN, UMFANG } from "../../lib/anfrage";
 
 const jpeg = Buffer.from([0xff, 0xd8, 0xff, 0xe0, ...Array(200).fill(0)]);
 
@@ -20,7 +21,7 @@ test("empty submit shows field errors and focuses the first one", async ({ page 
   for (const id of ["von_plz", "nach_plz", "beschreibung", "vorname", "nachname", "email", "telefon"]) {
     await expect(page.locator(`#${id}`)).toHaveAttribute("aria-invalid", "true");
   }
-  await expect(page.locator("#von_plz")).toBeFocused();
+  await expect(page.locator("#vorname")).toBeFocused();
 });
 
 test("invalid e-mail and phone are reported", async ({ page }) => {
@@ -42,21 +43,74 @@ test("conditional sections follow the selected service", async ({ page }) => {
   await expect(page.locator("#umfang")).toBeVisible();
 });
 
-test("valid enquiry with photo is accepted and the button blocks double submits", async ({ page }) => {
+test("valid enquiry without uploads is accepted and the button blocks double submits", async ({ page }) => {
   await page.goto("/kontakt");
   await page.waitForTimeout(2600); // the API rejects forms filled faster than a human could
   await fillValid(page);
-  await page.locator("#fotos-input").setInputFiles({ name: "zimmer.jpg", mimeType: "image/jpeg", buffer: jpeg });
-  await expect(page.getByText("zimmer.jpg")).toBeVisible();
+  for (const [id, value] of Object.entries({ termin: "Ende April", von_adresse: "Testweg 1", von_stock: "2", nach_adresse: "Testweg 2", nach_stock: "3", zimmer: "Drei Zimmer", montage: "Doppelbett" })) {
+    await page.locator(`#${id}`).fill(value);
+  }
+  await page.locator("#von_lift").selectOption("ja");
+  await page.locator("#nach_lift").selectOption("nein");
+  const expectedFields = await page.getByRole("form", { name: "Anfrage senden" }).evaluate((form: HTMLFormElement) =>
+    Object.fromEntries([...new FormData(form)].filter(([name]) => name !== "t")),
+  );
   let posts = 0;
   page.on("request", (r) => { if (r.url().endsWith("/api/anfrage") && r.method() === "POST") posts++; });
+  let release!: () => void;
+  const ready = new Promise<void>((resolve) => { release = resolve; });
+  await page.route("**/api/anfrage", async (route) => {
+    await ready;
+    const request = route.request();
+    const data = await new Request(request.url(), { method: "POST", headers: { "Content-Type": request.headers()["content-type"] }, body: new Uint8Array(request.postDataBuffer()!).buffer }).formData();
+    for (const [name, value] of Object.entries(expectedFields)) expect(data.get(name), name).toBe(value);
+    expect(data.getAll("fotos")).toHaveLength(0);
+    await route.continue();
+  });
   const btn = page.getByRole("button", { name: "Anfrage unverbindlich senden" });
   await btn.dblclick();
+  const sending = page.getByRole("form", { name: "Anfrage senden" }).locator("button[type=submit]");
+  await expect(sending).toBeDisabled();
+  await expect(sending).toHaveText(/Wird gesendet/);
+  release();
   await expect(page.getByRole("status")).toContainText("Danke, Ihre Anfrage ist bei uns angekommen.");
   expect(posts).toBe(1);
 });
 
+test("all service dropdowns retain their options and contact sections", async ({ page }) => {
+  await page.goto("/kontakt");
+  await expect(page.locator("#leistung option")).toHaveText(Object.values(LEISTUNGEN));
+  for (const service of Object.keys(LEISTUNGEN)) {
+    await page.locator("#leistung").selectOption(service);
+    await expect(page.locator("form legend").nth(0)).toHaveText("1. Wie erreichen wir Sie?");
+    await expect(page.locator("form legend").nth(3)).toHaveText("4. Beschreibung und Fotos");
+    for (const select of await page.locator('select[id$="_lift"]').all()) {
+      await expect(select.locator("option")).toHaveText(["Bitte wählen", ...Object.values(LIFT)]);
+      await select.selectOption("ja");
+      await expect(select).toHaveValue("ja");
+    }
+    if (await page.locator("#objektart").count()) {
+      await expect(page.locator("#objektart option")).toHaveText(["Bitte wählen", ...OBJEKTARTEN]);
+      await expect(page.locator("#umfang option")).toHaveText(["Bitte wählen", ...UMFANG]);
+      await page.locator("#objektart").selectOption(OBJEKTARTEN[0]);
+      await page.locator("#umfang").selectOption(UMFANG[0]);
+    }
+  }
+});
+
+test("photos are sent through WhatsApp instead of uploaded", async ({ page }) => {
+  await page.goto("/kontakt");
+  const form = page.getByRole("form", { name: "Anfrage senden" });
+  await expect(form.locator('input[type="file"]')).toHaveCount(0);
+  await expect(form.getByText("Fotos per WhatsApp senden", { exact: true })).toBeVisible();
+  const whatsapp = form.locator('a[href^="https://wa.me/"]').last();
+  await expect(whatsapp).toHaveAttribute("href", /^https:\/\/wa.me\/436603926662\?text=/);
+  await expect(whatsapp).toHaveAttribute("target", "_blank");
+  await expect(whatsapp).toHaveAttribute("rel", /noopener/);
+});
+
 test("provider failure is reported honestly in the UI", async ({ page }) => {
+  await page.setExtraHTTPHeaders({ "x-forwarded-for": `smtp-ui-${Date.now()}` });
   await page.goto("http://localhost:3101/kontakt");
   await page.waitForTimeout(2600);
   await fillValid(page);
@@ -111,7 +165,7 @@ test.describe("API", () => {
   });
 
   test("provider error returns 502, never success", async ({ request }) => {
-    const res = await request.post("http://localhost:3101/api/anfrage", { headers: json, multipart: multipart(), timeout: 60_000 });
+    const res = await request.post("http://localhost:3101/api/anfrage", { headers: { ...json, "x-forwarded-for": `smtp-api-${Date.now()}` }, multipart: multipart(), timeout: 60_000 });
     expect(res.status()).toBe(502);
     expect((await res.json()).ok).toBe(false);
   });

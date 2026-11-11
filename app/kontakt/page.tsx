@@ -9,7 +9,7 @@ import { mailHref, site, telHref, waHref } from "@/lib/site";
 export const metadata = pageMeta({
   title: "Kontakt & Angebot anfragen: Umzug und Räumung in Graz",
   description:
-    "Unverbindlich anfragen bei Die Anpacker in Graz: per Formular mit Fotos, Telefon, WhatsApp oder E-Mail. Für Umzüge, Entrümpelungen und Möbeltransporte.",
+    "Unverbindlich anfragen bei Die Anpacker in Graz: per Formular, Telefon, WhatsApp oder E-Mail. Für Umzüge, Entrümpelungen und Möbeltransporte.",
   path: "/kontakt",
 });
 
@@ -27,20 +27,24 @@ export default function KontaktPage() {
       </section>
 
       <section className="section" id="formular">
-        <div className="wrap grid gap-10 lg:grid-cols-12">
-          <aside className="space-y-6 lg:col-span-4" aria-labelledby="direkt-title">
-            <div className="ticket p-7">
-              <h2 id="direkt-title" className="display text-2xl">Direkt erreichen</h2>
-              <ul className="mt-6 space-y-3">
-                <li><a href={telHref} className="btn btn-primary w-full justify-start"><PhoneIcon className="size-5" /> {site.phone.display}</a></li>
-                <li><a href={waHref()} target="_blank" rel="noopener noreferrer" className="btn btn-invert w-full justify-start"><WhatsAppIcon className="size-5" /> WhatsApp schreiben</a></li>
-                <li><a href={mailHref} className="btn btn-invert w-full justify-start"><MailIcon className="size-5" /> {site.email}</a></li>
-              </ul>
-              <p className="mt-6 text-sm text-paper/75">
-                Fotos per WhatsApp sind oft der schnellste Weg zu einer ersten Einschätzung.
-              </p>
-            </div>
+        <div className="wrap grid gap-6 lg:grid-cols-12">
+          <aside className="ticket p-7 lg:col-span-10 lg:col-start-2" aria-labelledby="direkt-title">
+            <h2 id="direkt-title" className="display text-2xl">Direkt erreichen</h2>
+            <ul className="mt-6 grid gap-3 lg:grid-cols-3">
+              <li><a href={telHref} className="btn btn-primary w-full justify-start"><PhoneIcon className="size-5" /> {site.phone.display}</a></li>
+              <li><a href={waHref()} target="_blank" rel="noopener noreferrer" className="btn btn-invert w-full justify-start"><WhatsAppIcon className="size-5" /> WhatsApp schreiben</a></li>
+              <li><a href={mailHref} className="btn btn-invert w-full justify-start"><MailIcon className="size-5" /> {site.email}</a></li>
+            </ul>
+            <p className="mt-6 text-sm text-paper/75">
+              Fotos per WhatsApp sind oft der schnellste Weg zu einer ersten Einschätzung.
+            </p>
+          </aside>
 
+          <div className="lg:col-span-10 lg:col-start-2">
+            <AnfrageForm />
+          </div>
+
+          <div className="grid items-start gap-6 md:grid-cols-2 lg:col-span-10 lg:col-start-2">
             <div className="card p-7">
               <h2 className="h-sm">Was wir für ein Angebot brauchen</h2>
               <ul className="ticks mt-5 text-[.98rem]">
@@ -61,10 +65,6 @@ export default function KontaktPage() {
               <p className="mt-3 text-[.95rem] text-char">Kein Kundenbüro, persönliche Termine nach Vereinbarung.</p>
               <MapEmbed className="mt-5 h-80 bg-paper" />
             </div>
-          </aside>
-
-          <div className="lg:col-span-8">
-            <AnfrageForm />
           </div>
         </div>
       </section>
