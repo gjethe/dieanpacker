@@ -78,7 +78,8 @@ export async function POST(req: Request) {
     await sendAnfrage(result.data, attachments);
   } catch (err) {
     // Log only the error type, never the enquiry content.
-    console.error("anfrage: send failed:", err instanceof MailConfigError ? "not configured" : (err as Error)?.name || "unknown");
+    const e = err as { name?: string; code?: string; responseCode?: number };
+    console.error("anfrage: send failed:", err instanceof MailConfigError ? "not configured" : `${e?.name || "unknown"} code=${e?.code ?? "-"} smtp=${e?.responseCode ?? "-"}`);
     return reply(req, err instanceof MailConfigError ? 503 : 502, {
       ok: false,
       message: "Ihre Anfrage konnte gerade nicht versendet werden. Bitte rufen Sie uns an, schreiben Sie per WhatsApp oder direkt an office@dieanpacker.at.",

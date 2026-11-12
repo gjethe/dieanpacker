@@ -24,7 +24,7 @@ export default defineConfig({
       command: "npx next start -p 3101",
       url: "http://localhost:3101",
       reuseExistingServer: true,
-      env: { SMTP_HOST: "127.0.0.1", SMTP_PORT: "9", SMTP_USER: "test@example.invalid", SMTP_PASS: "x" },
+      env: { SMTP_HOST: "127.0.0.1", SMTP_PORT: "9", SMTP_USER: "test@example.invalid", SMTP_PASSWORD: "x" },
     },
   ],
 });

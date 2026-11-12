@@ -69,3 +69,12 @@ test("magic bytes", () => {
   assert.equal(looksLikeImage(new Uint8Array([0x89, 0x50, 0x4e, 0x47])), true);
   assert.equal(looksLikeImage(new TextEncoder().encode("%PDF-1.7 fake")), false);
 });
+
+test("line breaks in names cannot inject mail headers", () => {
+  const r = validate({ ...base, vorname: "Max\r\nBcc: x@evil.test", nachname: "Muster\nX" });
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    assert.doesNotMatch(r.data.vorname, /[\r\n]/);
+    assert.doesNotMatch(r.data.nachname, /[\r\n]/);
+  }
+});

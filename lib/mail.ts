@@ -8,7 +8,8 @@ export class MailConfigError extends Error {}
 function transport() {
   // Test-only: builds the complete MIME message without sending it. Never set in production.
   if (process.env.MAIL_TRANSPORT === "json") return nodemailer.createTransport({ jsonTransport: true });
-  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env;
+  const { SMTP_HOST, SMTP_PORT, SMTP_USER } = process.env;
+  const SMTP_PASS = process.env.SMTP_PASSWORD || process.env.SMTP_PASS; // SMTP_PASS: legacy name, still accepted
   if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) throw new MailConfigError("SMTP not configured");
   const port = Number(SMTP_PORT || 465);
   return nodemailer.createTransport({
@@ -90,7 +91,7 @@ export async function sendAnfrage(d: Anfrage, attachments: { filename: string; c
   const info = await t.sendMail({
     // Sender is always our own authenticated mailbox (SPF/DKIM aligned); the visitor goes in Reply-To.
     from: { name: "Website Die Anpacker", address: fromAddress },
-    to: process.env.CONTACT_TO || site.email,
+    to: process.env.CONTACT_EMAIL || process.env.CONTACT_TO || site.email,
     replyTo: { name: `${d.vorname} ${d.nachname}`, address: d.email },
     subject,
     text,

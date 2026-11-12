@@ -59,6 +59,9 @@ export type Errors = Partial<Record<Field | "fotos" | "form", string>>;
 export function validate(input: Record<string, unknown>): { ok: true; data: Anfrage } | { ok: false; errors: Errors } {
   const d: Record<string, string> = {};
   for (const [k, max] of Object.entries(FIELDS)) d[k] = clean(input[k], max);
+  // Names end up in Subject and Reply-To headers: collapse line breaks so no header can be injected.
+  d.vorname = d.vorname.replace(/\s+/g, " ");
+  d.nachname = d.nachname.replace(/\s+/g, " ");
   const e: Errors = {};
 
   if (!d.vorname) e.vorname = "Bitte geben Sie Ihren Vornamen an.";

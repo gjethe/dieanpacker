@@ -32,6 +32,7 @@ export const metadata: Metadata = {
   // Next fills twitter:title/description/image from openGraph on every page.
   twitter: { card: "summary_large_image" },
   robots: isPreview ? { index: false, follow: false } : { index: true, follow: true },
+  verification: { google: "xcOtBhxKpaKMb0t6DwZFM-JsVYkO71Jq4ZfFPnQ2Egg" },
 };
 
 export const viewport: Viewport = { themeColor: "#ffffff" };

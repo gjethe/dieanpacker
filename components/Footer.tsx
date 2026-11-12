@@ -62,6 +62,10 @@ export function Footer() {
             <li><CookieSettingsButton /></li>
           </ul>
         </div>
+        <p className="wrap pb-6 text-xs text-paper/50">
+          Powered by{" "}
+          <a className="text-paper/70 underline decoration-paper/30 underline-offset-4 transition-colors hover:text-paper hover:decoration-paper" href="https://gjethe.com" target="_blank" rel="noopener">Gjethe</a>
+        </p>
       </div>
     </footer>
   );
